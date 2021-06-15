@@ -23,7 +23,7 @@ RUN \
 
 COPY $VIVADO_CONFIG /vivado-installer/
 RUN \
-wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zvx --strip-components=1 -C /vivado-installer && \
+wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zx --strip-components=1 -C /vivado-installer && \
   /vivado-installer/xsetup \
     --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA \
     --batch Install \
@@ -32,7 +32,7 @@ wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zvx --stri
 
 COPY $SDNET_CONFIG /vivado-installer/
 RUN \
-wget -qO- http://dispense.es.net/Linux/xilinx/$SDNET_INSTALLER | tar zvx --strip-components=1 -C /vivado-installer && \
+wget -qO- http://dispense.es.net/Linux/xilinx/$SDNET_INSTALLER | tar zx --strip-components=1 -C /vivado-installer && \
   /vivado-installer/xsetup \
     --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA \
     --batch Install \
