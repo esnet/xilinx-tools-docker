@@ -25,7 +25,7 @@ include:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker build --pull -t $INTERNAL_IMAGE_TAG .
-    #- docker push $INTERNAL_IMAGE_TAG
+    - docker push $INTERNAL_IMAGE_TAG
 
 .push:
   stage: push
