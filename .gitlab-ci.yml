@@ -26,6 +26,7 @@ include:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker build --pull -t $INTERNAL_IMAGE_TAG .
     - docker push $INTERNAL_IMAGE_TAG
+  timeout: 2h
 
 .push:
   stage: push
@@ -35,6 +36,7 @@ include:
     - docker tag $INTERNAL_IMAGE_TAG $PUBLISH_TAG
     - docker push $PUBLISH_TAG
     - if [ "${PUBLISH_LATEST}" == "true" ]; then docker tag $INTERNAL_IMAGE_TAG $LATEST_TAG && docker push $LATEST_TAG; fi
+  timeout: 2h
 
 build_image:
   extends: .build
