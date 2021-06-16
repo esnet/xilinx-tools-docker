@@ -39,8 +39,4 @@ wget -qO- http://dispense.es.net/Linux/xilinx/$SDNET_INSTALLER | tar zx --strip-
     --config /vivado-installer/$SDNET_CONFIG && \
   rm -rf /vivado-installer
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
 CMD ["/bin/bash", "-l"]
