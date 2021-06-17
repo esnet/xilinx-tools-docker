@@ -22,6 +22,8 @@ default:
 container_scanning:
   variables:
     CLAIR_TIMEOUT: 100
+    CLAIR_TRACE: "true"
+    KLAR_TRACE: "true"
 
 include:
   - project: 'security/container-scanning'
