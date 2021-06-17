@@ -16,6 +16,10 @@ stages:
   - test
   - push
 
+container_scanning:
+  variables:
+    CLAIR_TIMEOUT: 100
+
 include:
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
