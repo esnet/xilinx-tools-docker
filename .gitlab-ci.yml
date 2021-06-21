@@ -16,6 +16,9 @@ stages:
   - test
   - push
 
+default:
+  tags:
+    - ht-docker
 container_scanning:
   variables:
     CLAIR_TIMEOUT: 100
