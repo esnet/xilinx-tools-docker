@@ -12,7 +12,7 @@ RUN \
   apt-get install -y --no-install-recommends wget libtinfo-dev libxrender1 libxtst6  x11-apps \
    libxi6 lib32gcc-7-dev net-tools graphviz unzip g++ libtinfo5 x11-utils xvfb unzip g++ libtinfo5 \
    libpci-dev libconfig-dev libsmbios-c2 python3-libsmbios python3-pip python3-click python3-yaml \
-   python3-jinja2 locales && \
+   python3-jinja2 make locales && \
   pip3 install pyyaml-include && \
   apt-get autoclean && \
   apt-get autoremove && \
@@ -23,7 +23,7 @@ RUN \
 
 COPY $VIVADO_CONFIG /vivado-installer/
 RUN \
-wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zvx --strip-components=1 -C /vivado-installer && \
+wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zx --strip-components=1 -C /vivado-installer && \
   /vivado-installer/xsetup \
     --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA \
     --batch Install \
@@ -32,15 +32,11 @@ wget -qO- http://dispense.es.net/Linux/xilinx/$VIVADO_INSTALLER | tar zvx --stri
 
 COPY $SDNET_CONFIG /vivado-installer/
 RUN \
-wget -qO- http://dispense.es.net/Linux/xilinx/$SDNET_INSTALLER | tar zvx --strip-components=1 -C /vivado-installer && \
+wget -qO- http://dispense.es.net/Linux/xilinx/$SDNET_INSTALLER | tar zx --strip-components=1 -C /vivado-installer && \
   /vivado-installer/xsetup \
     --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA \
     --batch Install \
     --config /vivado-installer/$SDNET_CONFIG && \
   rm -rf /vivado-installer
-
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/bin/bash", "-l"]
