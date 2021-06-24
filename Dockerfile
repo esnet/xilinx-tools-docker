@@ -12,7 +12,7 @@ RUN \
   apt-get install -y --no-install-recommends wget libtinfo-dev libxrender1 libxtst6  x11-apps \
    libxi6 lib32gcc-7-dev net-tools graphviz unzip g++ libtinfo5 x11-utils xvfb unzip g++ libtinfo5 \
    libpci-dev libconfig-dev libsmbios-c2 python3-libsmbios python3-pip python3-click python3-yaml \
-   python3-jinja2 make locales && \
+   python3-jinja2 wireshark-common tshark make locales && \
   pip3 install pyyaml-include && \
   apt-get autoclean && \
   apt-get autoremove && \
