@@ -50,16 +50,10 @@ include:
 build_image:
   extends: .build
 
-publish_develop:
-  extends: .push
-  variables:
-    PUBLISH_TAG: $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME:$CI_COMMIT_SHA
-    GIT_STRATEGY: none
-
 publish_release:
   extends: .push
   rules:
-    - if: '$CI_COMMIT_BRANCH == $RELEASE_BRANCH && $CI_COMMIT_TAG'
+    - if: $CI_COMMIT_TAG
   variables:
-    PUBLISH_TAG: $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+    PUBLISH_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     GIT_STRATEGY: none
