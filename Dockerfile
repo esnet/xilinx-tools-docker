@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:bionic
 ENV DEBIAN_FRONTEND noninteractive
 ARG VIVADO_INSTALLER="Xilinx_Unified_2020.2_1118_1232.tar.gz"
 ARG SDNET_INSTALLER="Xilinx_SDNet_2020.2_0216_2201.tar.gz"
