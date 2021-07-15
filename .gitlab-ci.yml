@@ -50,10 +50,18 @@ include:
 build_image:
   extends: .build
 
-publish_release:
+internal_release:
   extends: .push
   rules:
     - if: $CI_COMMIT_TAG
   variables:
     PUBLISH_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    GIT_STRATEGY: none
+
+external_release:
+  extends: .push
+  rules:
+    - if: $CI_COMMIT_TAG
+  variables:
+    PUBLISH_TAG: $ESNET_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_TAG
     GIT_STRATEGY: none
