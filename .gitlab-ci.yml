@@ -21,9 +21,7 @@ default:
     - ht-docker
 container_scanning:
   variables:
-    CLAIR_TIMEOUT: 100
-    CLAIR_TRACE: "true"
-    KLAR_TRACE: "true"
+    TRIVY_TIMEOUT: "1h"
 
 include:
   - project: 'security/container-scanning'
