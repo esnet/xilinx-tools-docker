@@ -13,8 +13,9 @@ RUN \
    libxi6 lib32gcc-7-dev net-tools graphviz unzip g++ libtinfo5 x11-utils xvfb unzip g++ libtinfo5 \
    libpci-dev libconfig-dev libsmbios-c2 python3-libsmbios python3-pip python3-click python3-yaml \
    python3-jinja2 wireshark-common tshark make lsb-release libssl1.0.0 locales git rsync zstd && \
-  apt-get install -y --no-install-recommends python3-scapy && \
+  apt-get install -y --no-install-recommends jq python3-scapy && \
   pip3 install pyyaml-include && \
+  pip3 install yq && \
   apt-get autoclean && \
   apt-get autoremove && \
   locale-gen en_US.UTF-8 && \
