@@ -4,6 +4,8 @@ ARG VIVADO_INSTALLER="Xilinx_Unified_2020.2_1118_1232.tar.gz"
 ARG SDNET_INSTALLER="Xilinx_SDNet_2020.2_0216_2201.tar.gz"
 ARG VIVADO_CONFIG="install_config.vivado2020.txt"
 ARG SDNET_CONFIG="install_config.sdnet.txt"
+ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/"
+ARG MINIO_CLIENT_VER="20210727064619.0.0"
 
 RUN \
   ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
@@ -22,6 +24,11 @@ RUN \
   update-locale LANG=en_US.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 
+# Install Minio/rados-rgw/s3 client
+RUN \
+  wget $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
+    dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
+    rm mcli_${MINIO_CLIENT_VER}_amd64.deb
 
 COPY $VIVADO_CONFIG /vivado-installer/
 RUN \
