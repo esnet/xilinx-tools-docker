@@ -1,4 +1,4 @@
-image: docker:19.03.8
+image: docker:20.10.10
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -9,7 +9,7 @@ variables:
   INTERNAL_IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
 
 services:
-  - docker:19.03.8-dind
+  - docker:20.10.10-dind
 
 stages:
   - build
@@ -19,6 +19,7 @@ stages:
 default:
   tags:
     - ht-docker
+
 container_scanning:
   variables:
     TRIVY_TIMEOUT: "1h"
@@ -27,7 +28,7 @@ include:
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
 
-.build:
+build:
   stage: build
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
@@ -44,9 +45,6 @@ include:
     - docker push $PUBLISH_TAG
     - if [ "${PUBLISH_LATEST}" == "true" ]; then docker tag $INTERNAL_IMAGE_TAG $LATEST_TAG && docker push $LATEST_TAG; fi
   timeout: 2h
-
-build_image:
-  extends: .build
 
 external_release:
   extends: .push
