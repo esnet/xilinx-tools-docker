@@ -11,6 +11,7 @@ RUN \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
     wget \
+    ca-certificates \
     libtinfo-dev \
     libxrender1 \
     libxtst6  \
@@ -35,7 +36,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 # Set up the base address for where our installer binaries are stored
-ARG DISPENSE_BASE_URL="http://dispense.es.net/Linux/xilinx"
+ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools in headless mode
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
