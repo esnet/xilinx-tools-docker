@@ -104,6 +104,7 @@ RUN \
     python3-jinja2 \
     wireshark-common \
     tshark \
+    tcpdump \
     make \
     git \
     rsync \
