@@ -73,20 +73,28 @@ RUN \
   ) && \
   rm -rf /vivado-installer
 
-# Install extra packages required at runtime for Xilinx tools
-# libssl1 is required due to it being improperly vendored in the sdnet tools.  This requirement may no longer exist in newer versions of the sdnet tools.
-# RUN \
-#   ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-#   apt-get update -y && \
-#   apt-get upgrade -y && \
-#   apt-get install -y --no-install-recommends \
-#     libssl1.0.0 \
-#     && \
-#   apt-get autoclean && \
-#   apt-get autoremove && \
-#   locale-gen en_US.UTF-8 && \
-#   update-locale LANG=en_US.UTF-8 && \
-#   rm -rf /var/lib/apt/lists/*
+# Install libssl 1.0.0 package from bionic since it is transitively required by the p4bm-vitisnet executable and is not
+# properly vendored by the Xilinx runtime environment.
+#
+# Ubuntu 18.04/bionic provides libssl 1.0.0
+# Ubuntu 20.04/focal  provides libssl 1.1
+#
+# p4bm-vitisnet is dynamically linked against
+#   libthrift-0.11.0.so  (vendored properly)
+#     libssl.so.1.0.0    (not vendored, must be provided by host)
+#     libcrypto.so.1.0.0 (not vendored, must be provided by host)
+#
+# The libssl .deb package provides both libssl and libcrypto.
+#
+# This is a sketchy hack to grab a deb from a different Ubuntu release by reaching directly into the package mirror's
+# pool and grabbing the .deb directly.  This is how we'll deal with it until Xilinx fixes this issue.
+
+ARG UBUNTU_MIRROR_BASE="http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl1.0"
+ARG LIBSSL_PKG_FILE="libssl1.0.0_1.0.2n-1ubuntu5.7_amd64.deb"
+RUN \
+  wget -q $UBUNTU_MIRROR_BASE/$LIBSSL_PKG_FILE && \
+  dpkg -i ./$LIBSSL_PKG_FILE && \
+  rm ./$LIBSSL_PKG_FILE
 
 # Install specific packages required by esnet-smartnic build
 RUN \
