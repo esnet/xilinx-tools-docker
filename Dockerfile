@@ -5,7 +5,7 @@ ARG SDNET_INSTALLER="Xilinx_SDNet_2020.2_0216_2201.tar.gz"
 ARG VIVADO_CONFIG="install_config.vivado2020.txt"
 ARG SDNET_CONFIG="install_config.sdnet.txt"
 ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/"
-ARG MINIO_CLIENT_VER="20210727064619.0.0"
+ARG MINIO_CLIENT_VER="20211116203736.0.0"
 
 RUN \
   ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
