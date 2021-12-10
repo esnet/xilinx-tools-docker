@@ -130,7 +130,7 @@ RUN \
 
 # Install Minio/rados-rgw/s3 client
 ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/"
-ARG MINIO_CLIENT_VER="20211116203736.0.0"
+ARG MINIO_CLIENT_VER="20211210001428.0.0"
 RUN \
   wget -q $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
     dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
