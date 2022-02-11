@@ -57,6 +57,24 @@ RUN \
     --config /vivado-installer/install_config_vivado2021.txt && \
   rm -rf /vivado-installer
 
+# Install log4j patch on top of the install
+ARG VIVADO_LOG4J_PATCH="Patch-Log4j-2.4.zip"
+COPY vivado-installer/ /vivado-installer/
+RUN \
+  ( \
+    if [ ! -e /vivado-installer/$VIVADO_LOG4J_PATCH ] ; then \
+      wget -q --directory-prefix=/vivado-installer $DISPENSE_BASE_URL/$VIVADO_LOG4J_PATCH ; \
+    fi ; \
+    unzip -d /opt/Xilinx /vivado-installer/$VIVADO_LOG4J_PATCH ; \
+  ) && \
+  ( \
+    cd /opt/Xilinx && \
+    export LD_LIBRARY_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/lib && \
+    ./Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/bin/python log4j_patch/patch.py ; \
+  ) && \
+  rm -rf /opt/Xilinx/log4j_patch && \
+  rm -rf /vivado-installer
+
 # Install the board files
 # Xilinx board files originally from: https://www.xilinx.com/bin/public/openDownload?filename=au280_boardfiles_v1_1_20211104.zip
 ARG BOARDFILES="au280_boardfiles_v1_1_20211104.zip au250_board_files_20200616.zip au55c_boardfiles_v1_0_20211104.zip au50_boardfiles_v1_3_20211104.zip"
