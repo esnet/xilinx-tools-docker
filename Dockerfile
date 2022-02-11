@@ -10,24 +10,23 @@ RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
-    wget \
     ca-certificates \
+    g++ \
+    graphviz \
+    lib32gcc-7-dev \
     libtinfo-dev \
+    libtinfo5 \
+    libxi6 \
     libxrender1 \
     libxtst6  \
-    x11-apps \
-    libxi6 \
-    lib32gcc-7-dev \
+    locales \
+    lsb-release \
     net-tools \
-    graphviz \
     unzip \
-    g++ \
-    libtinfo5 \
+    wget \
+    x11-apps \
     x11-utils \
     xvfb \
-    unzip \
-    lsb-release \
-    locales \
     && \
   apt-get autoclean && \
   apt-get autoremove && \
@@ -125,23 +124,23 @@ RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
-    libpci-dev \
+    git \
+    jq \
     libconfig-dev \
+    libpci-dev \
     libsmbios-c2 \
+    make \
+    python3-click \
+    python3-jinja2 \
     python3-libsmbios \
     python3-pip \
-    python3-click \
-    python3-yaml \
-    python3-jinja2 \
-    wireshark-common \
-    tshark \
-    tcpdump \
-    make \
-    git \
-    rsync \
-    zstd \
-    jq \
     python3-scapy \
+    python3-yaml \
+    rsync \
+    tcpdump \
+    tshark \
+    wireshark-common \
+    zstd \
     && \
   pip3 install pyyaml-include && \
   pip3 install yq && \
