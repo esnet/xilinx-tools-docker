@@ -38,10 +38,11 @@ RUN \
 ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools in headless mode
+# ENV var to help users to find the version of vivado that has been installed in this container
+ENV VIVADO_VERSION=2021.2
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="Xilinx_Unified_2021.2_1021_0703.tar.gz"
+ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_1021_0703.tar.gz"
 COPY vivado-installer/ /vivado-installer/
-
 RUN \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
@@ -60,7 +61,7 @@ RUN \
 # Xilinx board files originally from: https://www.xilinx.com/bin/public/openDownload?filename=au280_boardfiles_v1_1_20211104.zip
 ARG BOARDFILES="au280_boardfiles_v1_1_20211104.zip au250_board_files_20200616.zip au55c_boardfiles_v1_0_20211104.zip au50_boardfiles_v1_3_20211104.zip"
 RUN \
-  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/2021.2/data/boards/board_files && \
+  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/data/boards/board_files && \
   mkdir -p $BOARDFILE_INSTALL_PATH && \
   ( \
     for f in $BOARDFILES ; do \
