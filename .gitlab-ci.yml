@@ -31,7 +31,7 @@ build:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker build --pull -t $INTERNAL_IMAGE_TAG .
     - docker push $INTERNAL_IMAGE_TAG
-  timeout: 2h
+  timeout: 3h
 
 hub_release:
   stage: push
