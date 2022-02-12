@@ -10,24 +10,23 @@ RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
-    wget \
     ca-certificates \
+    g++ \
+    graphviz \
+    lib32gcc-7-dev \
     libtinfo-dev \
+    libtinfo5 \
+    libxi6 \
     libxrender1 \
     libxtst6  \
-    x11-apps \
-    libxi6 \
-    lib32gcc-7-dev \
+    locales \
+    lsb-release \
     net-tools \
-    graphviz \
     unzip \
-    g++ \
-    libtinfo5 \
+    wget \
+    x11-apps \
     x11-utils \
     xvfb \
-    unzip \
-    lsb-release \
-    locales \
     && \
   apt-get autoclean && \
   apt-get autoremove && \
@@ -39,10 +38,11 @@ RUN \
 ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools in headless mode
+# ENV var to help users to find the version of vivado that has been installed in this container
+ENV VIVADO_VERSION=2021.2
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="Xilinx_Unified_2021.2_1021_0703.tar.gz"
+ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_1021_0703.tar.gz"
 COPY vivado-installer/ /vivado-installer/
-
 RUN \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
@@ -57,11 +57,29 @@ RUN \
     --config /vivado-installer/install_config_vivado2021.txt && \
   rm -rf /vivado-installer
 
+# Install log4j patch on top of the install
+ARG VIVADO_LOG4J_PATCH="Patch-Log4j-2.4.zip"
+COPY vivado-installer/ /vivado-installer/
+RUN \
+  ( \
+    if [ ! -e /vivado-installer/$VIVADO_LOG4J_PATCH ] ; then \
+      wget -q --directory-prefix=/vivado-installer $DISPENSE_BASE_URL/$VIVADO_LOG4J_PATCH ; \
+    fi ; \
+    unzip -d /opt/Xilinx /vivado-installer/$VIVADO_LOG4J_PATCH ; \
+  ) && \
+  ( \
+    cd /opt/Xilinx && \
+    export LD_LIBRARY_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/lib && \
+    ./Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/bin/python log4j_patch/patch.py ; \
+  ) && \
+  rm -rf /opt/Xilinx/log4j_patch && \
+  rm -rf /vivado-installer
+
 # Install the board files
 # Xilinx board files originally from: https://www.xilinx.com/bin/public/openDownload?filename=au280_boardfiles_v1_1_20211104.zip
 ARG BOARDFILES="au280_boardfiles_v1_1_20211104.zip au250_board_files_20200616.zip au55c_boardfiles_v1_0_20211104.zip au50_boardfiles_v1_3_20211104.zip"
 RUN \
-  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/2021.2/data/boards/board_files && \
+  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/data/boards/board_files && \
   mkdir -p $BOARDFILE_INSTALL_PATH && \
   ( \
     for f in $BOARDFILES ; do \
@@ -125,23 +143,23 @@ RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
-    libpci-dev \
+    git \
+    jq \
     libconfig-dev \
+    libpci-dev \
     libsmbios-c2 \
+    make \
+    python3-click \
+    python3-jinja2 \
     python3-libsmbios \
     python3-pip \
-    python3-click \
-    python3-yaml \
-    python3-jinja2 \
-    wireshark-common \
-    tshark \
-    tcpdump \
-    make \
-    git \
-    rsync \
-    zstd \
-    jq \
     python3-scapy \
+    python3-yaml \
+    rsync \
+    tcpdump \
+    tshark \
+    wireshark-common \
+    zstd \
     && \
   pip3 install pyyaml-include && \
   pip3 install yq && \
@@ -152,8 +170,8 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 # Install Minio/rados-rgw/s3 client
-ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/"
-ARG MINIO_CLIENT_VER="20211210001428.0.0"
+ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/archive/"
+ARG MINIO_CLIENT_VER="20220107060138.0.0"
 RUN \
   wget -q $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
     dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
