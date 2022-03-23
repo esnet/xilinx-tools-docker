@@ -159,6 +159,7 @@ RUN \
     tcpdump \
     tshark \
     wireshark-common \
+    zip \
     zstd \
     && \
   pip3 install pyyaml-include && \
