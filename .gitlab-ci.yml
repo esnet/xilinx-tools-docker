@@ -33,31 +33,6 @@ build:
     - docker push $INTERNAL_IMAGE_TAG
   timeout: 3h
 
-hub_release:
-  stage: push
-  variables:
-    # example PUBLISH_TAG: hub.es.net:5000/xilinx-tools-docker:18106-g1b221f5c
-    PUBLISH_TAG: hub.es.net:5000/$CI_PROJECT_NAME:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
-    GIT_STRATEGY: none
-  script:
-    # Auth and pull the image from gitlab
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker pull $INTERNAL_IMAGE_TAG
-
-    # Tag the image for release
-    - docker tag $INTERNAL_IMAGE_TAG $PUBLISH_TAG$TAG_SUFFIX
-
-    # Push to external registry
-    - docker push $PUBLISH_TAG$TAG_SUFFIX
-  timeout: 2h
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
-      when: manual
-      allow_failure: true
-      variables:
-        TAG_SUFFIX: -dev
-
 wharf_release:
   stage: push
   variables:
