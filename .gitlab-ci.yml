@@ -11,7 +11,6 @@ services:
 stages:
   - build
   - test
-  - push
 
 default:
   tags:
@@ -32,29 +31,3 @@ build:
     - docker build --pull -t $INTERNAL_IMAGE_TAG .
     - docker push $INTERNAL_IMAGE_TAG
   timeout: 3h
-
-wharf_release:
-  stage: push
-  variables:
-    # example PUBLISH_TAG: wharf.es.net/ht/xilinx-tools-docker:18106-g1b221f5c
-    PUBLISH_TAG: $HSITE/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
-    GIT_STRATEGY: none
-  script:
-    # Auth and pull the image from gitlab
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker pull $INTERNAL_IMAGE_TAG
-
-    # Tag the image for release
-    - docker tag $INTERNAL_IMAGE_TAG $PUBLISH_TAG$TAG_SUFFIX
-
-    # Auth and push to external registry
-    - docker login -u "$HUSER" -p "$HTOKEN" "$HSITE"
-    - docker push $PUBLISH_TAG$TAG_SUFFIX
-  timeout: 2h
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
-      when: manual
-      allow_failure: true
-      variables:
-        TAG_SUFFIX: -dev
