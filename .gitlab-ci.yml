@@ -21,6 +21,7 @@ container_scanning:
     TRIVY_TIMEOUT: "1h"
 
 include:
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
 
