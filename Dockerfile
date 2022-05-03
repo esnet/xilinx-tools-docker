@@ -58,7 +58,7 @@ RUN \
   rm -rf /vivado-installer
 
 # Install log4j patch on top of the install
-ARG VIVADO_LOG4J_PATCH="Patch-Log4j-2.4.zip"
+ARG VIVADO_LOG4J_PATCH="Patch-Log4j-2.5.zip"
 COPY vivado-installer/ /vivado-installer/
 RUN \
   ( \
