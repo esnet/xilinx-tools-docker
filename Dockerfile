@@ -57,22 +57,6 @@ RUN \
     --config /vivado-installer/install_config_vivado2022.txt && \
   rm -rf /vivado-installer
 
-# Install the board files
-# Xilinx board files originally from: https://www.xilinx.com/bin/public/openDownload?filename=au280_boardfiles_v1_1_20211104.zip
-ARG BOARDFILES="au280_boardfiles_v1_1_20211104.zip au250_board_files_20200616.zip au55c_boardfiles_v1_0_20211104.zip au50_boardfiles_v1_3_20211104.zip"
-RUN \
-  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/data/boards/board_files && \
-  mkdir -p $BOARDFILE_INSTALL_PATH && \
-  ( \
-    for f in $BOARDFILES ; do \
-      if [ ! -e /vivado-installer/$f ] ; then \
-        wget -q --directory-prefix=/vivado-installer $DISPENSE_BASE_URL/$f ; \
-      fi ; \
-      unzip -d $BOARDFILE_INSTALL_PATH /vivado-installer/$f ; \
-    done \
-  ) && \
-  rm -rf /vivado-installer
-
 #
 # ** ONLY REQUIRED WHEN BUILDING ON UBUNTU 20.04 **
 #
