@@ -133,8 +133,6 @@ RUN \
     && \
   apt-get autoclean && \
   apt-get autoremove && \
-  locale-gen en_US.UTF-8 && \
-  update-locale LANG=en_US.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 
 # Install specific packages required by esnet-smartnic build
@@ -166,8 +164,6 @@ RUN \
   pip3 install yq && \
   apt-get autoclean && \
   apt-get autoremove && \
-  locale-gen en_US.UTF-8 && \
-  update-locale LANG=en_US.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 
 # Install Minio/rados-rgw/s3 client
