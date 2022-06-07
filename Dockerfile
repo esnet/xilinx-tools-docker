@@ -39,9 +39,9 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
-ENV VIVADO_VERSION=2021.2
+ENV VIVADO_VERSION=2022.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_1021_0703.tar.gz"
+ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0420_0327.tar.gz"
 COPY vivado-installer/ /vivado-installer/
 RUN \
   ( \
@@ -54,7 +54,7 @@ RUN \
   /vivado-installer/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
-    --config /vivado-installer/install_config_vivado2021.txt && \
+    --config /vivado-installer/install_config_vivado2022.txt && \
   rm -rf /vivado-installer
 
 # Install log4j patch on top of the install
