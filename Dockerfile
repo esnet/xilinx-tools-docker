@@ -6,7 +6,7 @@ COPY sources.list /etc/apt/sources.list
 
 # Install packages required for running the vivado installer
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
@@ -125,7 +125,7 @@ RUN \
 # properly vendored by the Xilinx runtime environment.
 #
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
@@ -139,7 +139,7 @@ RUN \
 
 # Install specific packages required by esnet-smartnic build
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
