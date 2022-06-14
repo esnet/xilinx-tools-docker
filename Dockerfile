@@ -57,6 +57,24 @@ RUN \
     --config /vivado-installer/install_config_vivado2022.txt && \
   rm -rf /vivado-installer
 
+# Install the latest Update for Xilinx Vivado tools in headless mode
+# Xilinx update tar file originally from: https://www.xilinx.com/support/download.html
+ARG VIVADO_UPDATE="Xilinx_Vivado_Vitis_Update_2022.1.1_0603_1803.tar.gz"
+COPY vivado-installer/install_config_vivado2022.txt vivado-installer/Xilinx_Vivado_Vitis_Update_* /vivado-installer/
+RUN \
+  ( \
+    if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
+      tar zxf /vivado-installer/$VIVADO_UPDATE --strip-components=1 -C /vivado-installer ; \
+    else \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | tar zx --strip-components=1 -C /vivado-installer ; \
+    fi \
+  ) && \
+  /vivado-installer/xsetup \
+    --agree 3rdPartyEULA,XilinxEULA \
+    --batch Update \
+    --config /vivado-installer/install_config_vivado2022.txt && \
+  rm -rf /vivado-installer
+
 # Install specific packages required by esnet-smartnic build
 RUN \
   apt-get update -y && \
