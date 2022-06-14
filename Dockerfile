@@ -42,7 +42,7 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 ENV VIVADO_VERSION=2022.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
 ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0420_0327.tar.gz"
-COPY vivado-installer/ /vivado-installer/
+COPY vivado-installer/install_config_vivado2022.txt vivado-installer/Xilinx_Unified_* /vivado-installer/
 RUN \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
