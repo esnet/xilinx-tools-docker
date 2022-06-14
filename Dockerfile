@@ -2,7 +2,7 @@ FROM ubuntu:bionic
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configure local ubuntu mirror as package source
-COPY sources.list /etc/apt/sources.list
+COPY sources.list.bionic /etc/apt/sources.list
 
 # Install packages required for running the vivado installer
 RUN \
