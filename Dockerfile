@@ -38,42 +38,40 @@ RUN \
 # Set up the base address for where our installer binaries are stored
 ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
-# Install the Xilinx Vivado tools in headless mode
+# Install the Xilinx Vivado tools and updates in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
 ENV VIVADO_VERSION=2022.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
 ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0420_0327.tar.gz"
-COPY vivado-installer/install_config_vivado2022.txt vivado-installer/Xilinx_Unified_* /vivado-installer/
+ARG VIVADO_UPDATE="Xilinx_Vivado_Vitis_Update_${VIVADO_VERSION}.1_0603_1803.tar.gz"
+COPY vivado-installer/ /vivado-installer/
 RUN \
+  mkdir -p /vivado-installer/install && \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
-      tar zxf /vivado-installer/$VIVADO_INSTALLER --strip-components=1 -C /vivado-installer ; \
+      pigz -dc /vivado-installer/$VIVADO_INSTALLER | tar xa --strip-components=1 -C /vivado-installer/install ; \
     else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | tar zx --strip-components=1 -C /vivado-installer ; \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/install ; \
     fi \
   ) && \
-  /vivado-installer/xsetup \
+  /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
     --config /vivado-installer/install_config_vivado2022.txt && \
-  rm -rf /vivado-installer
-
-# Install the latest Update for Xilinx Vivado tools in headless mode
-# Xilinx update tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_UPDATE="Xilinx_Vivado_Vitis_Update_2022.1.1_0603_1803.tar.gz"
-COPY vivado-installer/install_config_vivado2022.txt vivado-installer/Xilinx_Vivado_Vitis_Update_* /vivado-installer/
-RUN \
+  rm -r /vivado-installer/install && \
+  mkdir -p /vivado-installer/update && \
   ( \
     if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-      tar zxf /vivado-installer/$VIVADO_UPDATE --strip-components=1 -C /vivado-installer ; \
+      pigz -dc /vivado-installer/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
     else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | tar zx --strip-components=1 -C /vivado-installer ; \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
     fi \
   ) && \
-  /vivado-installer/xsetup \
+  /vivado-installer/update/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Update \
     --config /vivado-installer/install_config_vivado2022.txt && \
+  rm -r /vivado-installer/update && \
   rm -rf /vivado-installer
 
 # Install specific packages required by esnet-smartnic build
