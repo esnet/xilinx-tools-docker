@@ -22,6 +22,7 @@ RUN \
     locales \
     lsb-release \
     net-tools \
+    pigz \
     unzip \
     wget \
     x11-apps \
