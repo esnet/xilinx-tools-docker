@@ -1,8 +1,8 @@
-FROM ubuntu:focal
+FROM ubuntu:bionic
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configure local ubuntu mirror as package source
-COPY sources.list.focal /etc/apt/sources.list
+COPY sources.list.bionic /etc/apt/sources.list
 
 # Install packages required for running the vivado installer
 RUN \
@@ -73,6 +73,17 @@ RUN \
     --config /vivado-installer/install_config_vivado2022.txt && \
   rm -r /vivado-installer/update && \
   rm -rf /vivado-installer
+
+# ONLY REQUIRED FOR Ubuntu 18.04 (bionic)
+# Hack: workaround p4c vitisnet IP version bug
+RUN \
+  sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
+
+# ONLY REQUIRED FOR Ubuntu 18.04 (bionic)
+# Hack: temporary tool hack to make libthrift-0.11.0 available on 18.04
+RUN \
+  cp /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
+     /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/18/libthrift-0.11.0.so
 
 # Install specific packages required by esnet-smartnic build
 RUN \
