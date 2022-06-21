@@ -74,7 +74,6 @@ RUN \
   rm -r /vivado-installer/update && \
   rm -rf /vivado-installer
 
-# ONLY REQUIRED FOR Ubuntu 18.04 (bionic)
 # Hack: workaround p4c vitisnet IP version bug
 RUN \
   sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
