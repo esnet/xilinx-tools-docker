@@ -78,11 +78,20 @@ RUN \
 RUN \
   sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
 
-# ONLY REQUIRED FOR Ubuntu 18.04 (bionic)
+# ONLY REQUIRED FOR Ubuntu 18.04 (bionic) but harmless on other distros
 # Hack: temporary tool hack to make libthrift-0.11.0 available on 18.04
 RUN \
   cp /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
      /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/18/libthrift-0.11.0.so
+
+# ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
+# Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
+#       from the flexlm license code within Vivado
+RUN \
+  wget -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
+  dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
+    tar -C /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+  rm /tmp/libudev1_*.deb
 
 # Install specific packages required by esnet-smartnic build
 RUN \
