@@ -1,12 +1,12 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configure local ubuntu mirror as package source
-COPY sources.list /etc/apt/sources.list
+COPY sources.list.focal /etc/apt/sources.list
 
 # Install packages required for running the vivado installer
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
@@ -22,6 +22,7 @@ RUN \
     locales \
     lsb-release \
     net-tools \
+    pigz \
     unzip \
     wget \
     x11-apps \
@@ -37,109 +38,63 @@ RUN \
 # Set up the base address for where our installer binaries are stored
 ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
-# Install the Xilinx Vivado tools in headless mode
+# Install the Xilinx Vivado tools and updates in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
-ENV VIVADO_VERSION=2021.2
+ENV VIVADO_VERSION=2022.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_1021_0703.tar.gz"
+ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0420_0327.tar.gz"
+ARG VIVADO_UPDATE="Xilinx_Vivado_Vitis_Update_${VIVADO_VERSION}.1_0603_1803.tar.gz"
 COPY vivado-installer/ /vivado-installer/
 RUN \
+  mkdir -p /vivado-installer/install && \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
-      tar zxf /vivado-installer/$VIVADO_INSTALLER --strip-components=1 -C /vivado-installer ; \
+      pigz -dc /vivado-installer/$VIVADO_INSTALLER | tar xa --strip-components=1 -C /vivado-installer/install ; \
     else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | tar zx --strip-components=1 -C /vivado-installer ; \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/install ; \
     fi \
   ) && \
-  /vivado-installer/xsetup \
+  /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
-    --config /vivado-installer/install_config_vivado2021.txt && \
+    --config /vivado-installer/install_config_vivado2022.txt && \
+  rm -r /vivado-installer/install && \
+  mkdir -p /vivado-installer/update && \
+  ( \
+    if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
+      pigz -dc /vivado-installer/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+    else \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+    fi \
+  ) && \
+  /vivado-installer/update/xsetup \
+    --agree 3rdPartyEULA,XilinxEULA \
+    --batch Update \
+    --config /vivado-installer/install_config_vivado2022.txt && \
+  rm -r /vivado-installer/update && \
   rm -rf /vivado-installer
 
-# Install log4j patch on top of the install
-ARG VIVADO_LOG4J_PATCH="Patch-Log4j-2.5.zip"
-COPY vivado-installer/ /vivado-installer/
+# Hack: workaround p4c vitisnet IP version bug
 RUN \
-  ( \
-    if [ ! -e /vivado-installer/$VIVADO_LOG4J_PATCH ] ; then \
-      wget -q --directory-prefix=/vivado-installer $DISPENSE_BASE_URL/$VIVADO_LOG4J_PATCH ; \
-    fi ; \
-    unzip -d /opt/Xilinx /vivado-installer/$VIVADO_LOG4J_PATCH ; \
-  ) && \
-  ( \
-    cd /opt/Xilinx && \
-    export LD_LIBRARY_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/lib && \
-    ./Vivado/${VIVADO_VERSION}/tps/lnx64/python-3.8.3/bin/python log4j_patch/patch.py ; \
-  ) && \
-  rm -rf /opt/Xilinx/log4j_patch && \
-  rm -rf /vivado-installer
+  sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
 
-# Install the board files
-# Xilinx board files originally from: https://www.xilinx.com/bin/public/openDownload?filename=au280_boardfiles_v1_1_20211104.zip
-ARG BOARDFILES="au280_boardfiles_v1_1_20211104.zip au250_board_files_20200616.zip au55c_boardfiles_v1_0_20211104.zip au50_boardfiles_v1_3_20211104.zip"
+# ONLY REQUIRED FOR Ubuntu 18.04 (bionic) but harmless on other distros
+# Hack: temporary tool hack to make libthrift-0.11.0 available on 18.04
 RUN \
-  export BOARDFILE_INSTALL_PATH=/opt/Xilinx/Vivado/${VIVADO_VERSION}/data/boards/board_files && \
-  mkdir -p $BOARDFILE_INSTALL_PATH && \
-  ( \
-    for f in $BOARDFILES ; do \
-      if [ ! -e /vivado-installer/$f ] ; then \
-        wget -q --directory-prefix=/vivado-installer $DISPENSE_BASE_URL/$f ; \
-      fi ; \
-      unzip -d $BOARDFILE_INSTALL_PATH /vivado-installer/$f ; \
-    done \
-  ) && \
-  rm -rf /vivado-installer
+  cp /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
+     /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/18/libthrift-0.11.0.so
 
-#
-# ** ONLY REQUIRED WHEN BUILDING ON UBUNTU 20.04 **
-#
-# Install libssl 1.0.0 package from bionic since it is transitively required by the p4bm-vitisnet executable and is not
-# properly vendored by the Xilinx runtime environment.
-#
-# Ubuntu 18.04/bionic provides libssl 1.0.0
-# Ubuntu 20.04/focal  provides libssl 1.1
-#
-# p4bm-vitisnet is dynamically linked against
-#   libthrift-0.11.0.so  (vendored properly)
-#     libssl.so.1.0.0    (not vendored, must be provided by host)
-#     libcrypto.so.1.0.0 (not vendored, must be provided by host)
-#
-# The libssl .deb package provides both libssl and libcrypto.
-#
-# This is a sketchy hack to grab a deb from a different Ubuntu release by reaching directly into the package mirror's
-# pool and grabbing the .deb directly.  This is how we'll deal with it until Xilinx fixes this issue.
-#
-# ARG UBUNTU_MIRROR_BASE="http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl1.0"
-# ARG LIBSSL_PKG_FILE="libssl1.0.0_1.0.2n-1ubuntu5.7_amd64.deb"
-# RUN \
-#   wget -q $UBUNTU_MIRROR_BASE/$LIBSSL_PKG_FILE && \
-#   dpkg -i ./$LIBSSL_PKG_FILE && \
-#   rm ./$LIBSSL_PKG_FILE
-
-
-#
-# ** ONLY REQUIRED WHEN BUILDING ON UBUNTU 18.04 **
-#
-# Install libssl 1.0.0 package since it is transitively required by the p4bm-vitisnet executable and is not
-# properly vendored by the Xilinx runtime environment.
-#
+# ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
+# Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
+#       from the flexlm license code within Vivado
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-  apt-get update -y && \
-  apt-get upgrade -y && \
-  apt-get install -y --no-install-recommends \
-    libssl1.0.0 \
-    && \
-  apt-get autoclean && \
-  apt-get autoremove && \
-  locale-gen en_US.UTF-8 && \
-  update-locale LANG=en_US.UTF-8 && \
-  rm -rf /var/lib/apt/lists/*
+  wget -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
+  dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
+    tar -C /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+  rm /tmp/libudev1_*.deb
 
 # Install specific packages required by esnet-smartnic build
 RUN \
-  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
@@ -166,13 +121,11 @@ RUN \
   pip3 install yq && \
   apt-get autoclean && \
   apt-get autoremove && \
-  locale-gen en_US.UTF-8 && \
-  update-locale LANG=en_US.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 
 # Install Minio/rados-rgw/s3 client
 ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/archive/"
-ARG MINIO_CLIENT_VER="20220107060138.0.0"
+ARG MINIO_CLIENT_VER="20220611211036.0.0"
 RUN \
   wget -q $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
     dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
