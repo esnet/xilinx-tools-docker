@@ -35,7 +35,12 @@ RUN \
   update-locale LANG=en_US.UTF-8 && \
   rm -rf /var/lib/apt/lists/*
 
-# Set up the base address for where our installer binaries are stored
+# Set up the base address for where installer binaries are stored within ESnet's private network
+#
+# NOTE: This URL is NOT REACHABLE outside of ESnet's private network.  Non-ESnet users must follow
+#       the instructions in the README.md file and download their own copies of the installers
+#       directly from the AMD/Xilinx website and drop them into the vivado-installer directory
+#
 ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools and updates in headless mode
