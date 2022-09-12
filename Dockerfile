@@ -67,7 +67,7 @@ RUN \
   mkdir -p /vivado-installer/update && \
   ( \
     if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-      pigz -dc /vivado-installer/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+      pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
     else \
       wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
     fi \
