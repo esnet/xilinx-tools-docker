@@ -85,10 +85,12 @@ RUN \
 # Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
 #       from the flexlm license code within Vivado
 RUN \
-  wget -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
-  dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
-    tar -C /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
-  rm /tmp/libudev1_*.deb
+  if [ "$(lsb_release --short --release)" = "20.04" ] ; then \
+    wget -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
+    dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
+      tar -C /opt/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+    rm /tmp/libudev1_*.deb ; \
+  fi
 
 # Install specific packages required by esnet-smartnic build
 RUN \
