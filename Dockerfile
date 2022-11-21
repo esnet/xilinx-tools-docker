@@ -65,7 +65,6 @@ RUN \
     --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
   rm -r /vivado-installer/install && \
   mkdir -p /vivado-installer/update && \
-
   if [ ! -z "$VIVADO_UPDATE" ] ; then \
     ( \
       if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
