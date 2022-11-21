@@ -1,4 +1,4 @@
-image: docker:20.10.10
+image: docker:20.10.21
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -6,7 +6,7 @@ variables:
   INTERNAL_IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
 
 services:
-  - docker:20.10.10-dind
+  - docker:20.10.21-dind
 
 stages:
   - build
