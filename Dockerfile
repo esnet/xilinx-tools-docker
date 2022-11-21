@@ -62,22 +62,25 @@ RUN \
   /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
-    --config /vivado-installer/install_config_vivado2022.txt && \
+    --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
   rm -r /vivado-installer/install && \
   mkdir -p /vivado-installer/update && \
-  ( \
-    if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-      pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
-    else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
-    fi \
-  ) && \
-  /vivado-installer/update/xsetup \
-    --agree 3rdPartyEULA,XilinxEULA \
-    --batch Update \
-    --config /vivado-installer/install_config_vivado2022.txt && \
-  rm -r /vivado-installer/update && \
-  rm -rf /vivado-installer
+
+  if [ ! -z "$VIVADO_UPDATE" ] ; then \
+    ( \
+      if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
+        pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
+      else \
+        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+      fi \
+    ) && \
+    /vivado-installer/update/xsetup \
+      --agree 3rdPartyEULA,XilinxEULA \
+      --batch Update \
+      --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
+    rm -r /vivado-installer/update && \
+    rm -rf /vivado-installer ; \
+  fi
 
 # Hack: workaround p4c vitisnet IP version bug
 RUN \
