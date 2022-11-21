@@ -81,10 +81,6 @@ RUN \
     rm -rf /vivado-installer ; \
   fi
 
-# Hack: workaround p4c vitisnet IP version bug
-RUN \
-  sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
-
 # ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
 # Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
 #       from the flexlm license code within Vivado
