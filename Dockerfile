@@ -122,12 +122,4 @@ RUN \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/*
 
-# Install Minio/rados-rgw/s3 client
-ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/archive/"
-ARG MINIO_CLIENT_VER="20220611211036.0.0"
-RUN \
-  wget -q $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
-    dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
-    rm mcli_${MINIO_CLIENT_VER}_amd64.deb
-
 CMD ["/bin/bash", "-l"]
