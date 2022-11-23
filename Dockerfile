@@ -122,4 +122,8 @@ RUN \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/*
 
+# Set up the container to pre-source the vivado environment
+COPY ./entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
+
 CMD ["/bin/bash", "-l"]
