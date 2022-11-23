@@ -62,32 +62,28 @@ RUN \
   /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
-    --config /vivado-installer/install_config_vivado2022.txt && \
+    --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
   rm -r /vivado-installer/install && \
   mkdir -p /vivado-installer/update && \
-  ( \
-    if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-      pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
-    else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
-    fi \
-  ) && \
-  /vivado-installer/update/xsetup \
-    --agree 3rdPartyEULA,XilinxEULA \
-    --batch Update \
-    --config /vivado-installer/install_config_vivado2022.txt && \
-  rm -r /vivado-installer/update && \
-  rm -rf /vivado-installer
+  if [ ! -z "$VIVADO_UPDATE" ] ; then \
+    ( \
+      if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
+        pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
+      else \
+        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+      fi \
+    ) && \
+    /vivado-installer/update/xsetup \
+      --agree 3rdPartyEULA,XilinxEULA \
+      --batch Update \
+      --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
+    rm -r /vivado-installer/update && \
+    rm -rf /vivado-installer ; \
+  fi
 
 # Hack: workaround p4c vitisnet IP version bug
 RUN \
   sed -i s/vitis_net_p4_v1_0/vitis_net_p4_v1_1/g /opt/Xilinx/Vivado/2022.1/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl
-
-# ONLY REQUIRED FOR Ubuntu 18.04 (bionic) but harmless on other distros
-# Hack: temporary tool hack to make libthrift-0.11.0 available on 18.04
-RUN \
-  cp /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
-     /opt/Xilinx/Vivado/2022.1/lib/lnx64.o/Ubuntu/18/libthrift-0.11.0.so
 
 # ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
 # Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
@@ -127,13 +123,5 @@ RUN \
   apt-get autoclean && \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/*
-
-# Install Minio/rados-rgw/s3 client
-ARG MINIO_CLIENT_BASE_URL="https://dl.min.io/client/mc/release/linux-amd64/archive/"
-ARG MINIO_CLIENT_VER="20220611211036.0.0"
-RUN \
-  wget -q $MINIO_CLIENT_BASE_URL/mcli_${MINIO_CLIENT_VER}_amd64.deb && \
-    dpkg -i mcli_${MINIO_CLIENT_VER}_amd64.deb && \
-    rm mcli_${MINIO_CLIENT_VER}_amd64.deb
 
 CMD ["/bin/bash", "-l"]
