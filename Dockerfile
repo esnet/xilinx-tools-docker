@@ -83,13 +83,51 @@ RUN \
     rm /tmp/libudev1_*.deb ; \
   fi
 
+# Hack: fix the missing (ie. not properly vendored) libthrift0.11.0 package for Ubuntu 22.04 (jammy) by copying
+#       it from where it is already vendored for Ubuntu 20.04 (focal)
+RUN \
+  if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
+    mkdir -p /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 && \
+    cp       /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
+             /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22/libthrift-0.11.0.so ; \
+  fi
+
+# Hack: Install libssl 1.1.1 package from Ubuntu 20.04 (focal) since it is transitively required by the p4bm-vitisnet
+#       executable and is not properly vendored by the Xilinx runtime environment.
+#
+# Ubuntu 20.04/focal  provides libssl 1.1
+# Ubuntu 22.04/jammy  provides libssl 3.3
+#
+# p4bm-vitisnet is dynamically linked against
+#   libthrift-0.11.0.so  (not vendored, see previous hack description)
+#     libssl.so.1.1      (not vendored, pull the old version from Ubuntu 20.04)
+#     libcrypto.so.1.1   (not vendored, pull the old version from Ubuntu 20.04)
+#
+# The libssl .deb package provides both libssl and libcrypto.
+#
+# This is a sketchy hack to grab a deb from a different Ubuntu release by reaching directly into the package mirror's
+# pool and grabbing the .deb directly.  This is how we'll deal with it until Xilinx fixes this issue (again).
+
+RUN \
+  if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
+    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb && \
+    dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
+      tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+    rm /tmp/libssl1.*.deb ; \
+  fi
+
 # Apply post-install patches to fix issues found on each OS release
+# Ubuntu 22.04 patches
+#   * Add vendor'd library path for Ubuntu/22.  See: hacks above to fix missing/improperly vendor'd libraries
 # Common patches
 #   * Disable workaround for X11 XSupportsLocale bug.  This workaround triggers additional requirements on the host
 #     to have an entire suite of X11 related libraries installed even though we only use vivado in batch/tcl mode.
 #     See: https://support.xilinx.com/s/article/62553?language=en_US
 COPY patches/ /patches
 RUN \
+  if [ -e "/patches/ubuntu-$(lsb_release --short --release)-vivado-${VIVADO_VERSION}-postinstall.patch" ] ; then \
+    patch -p 1 < /patches/ubuntu-$(lsb_release --short --release)-vivado-${VIVADO_VERSION}-postinstall.patch ; \
+  fi ; \
   if [ -e "/patches/vivado-${VIVADO_VERSION}-postinstall.patch" ] ; then \
     patch -p 1 < /patches/vivado-${VIVADO_VERSION}-postinstall.patch ; \
   fi

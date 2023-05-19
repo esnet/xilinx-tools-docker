@@ -48,8 +48,10 @@ $ tree
 ├── LICENSE.md
 ├── README.md
 ├── patches
+│   ├── ubuntu-22.04-vivado-2023.1-postinstall.patch
 │   └── vivado-2023.1-postinstall.patch
 ├── sources.list.focal
+├── sources.list.jammy
 └── vivado-installer
     ├── install_config_vivado.2023.1.txt
     └── Xilinx_Unified_2023.1_0507_1903.tar.gz   <--------------------- put the base installer here
