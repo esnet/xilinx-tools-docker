@@ -11,23 +11,14 @@ RUN \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
-    g++ \
-    graphviz \
-    lib32gcc-7-dev \
-    libtinfo-dev \
     libtinfo5 \
-    libxi6 \
-    libxrender1 \
-    libxtst6  \
     locales \
     lsb-release \
     net-tools \
+    patch \
     pigz \
     unzip \
     wget \
-    x11-apps \
-    x11-utils \
-    xvfb \
     && \
   apt-get autoclean && \
   apt-get autoremove && \
@@ -92,11 +83,23 @@ RUN \
     rm /tmp/libudev1_*.deb ; \
   fi
 
+# Apply post-install patches to fix issues found on each OS release
+# Common patches
+#   * Disable workaround for X11 XSupportsLocale bug.  This workaround triggers additional requirements on the host
+#     to have an entire suite of X11 related libraries installed even though we only use vivado in batch/tcl mode.
+#     See: https://support.xilinx.com/s/article/62553?language=en_US
+COPY patches/ /patches
+RUN \
+  if [ -e "/patches/vivado-${VIVADO_VERSION}-postinstall.patch" ] ; then \
+    patch -p 1 < /patches/vivado-${VIVADO_VERSION}-postinstall.patch ; \
+  fi
+
 # Install specific packages required by esnet-smartnic build
 RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
+    build-essential \
     git \
     jq \
     libconfig-dev \
