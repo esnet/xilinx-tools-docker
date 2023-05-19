@@ -88,7 +88,7 @@ RUN \
   if [ "$(lsb_release --short --release)" = "20.04" ] ; then \
     wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
-      tar -C /opt/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+      tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libudev1_*.deb ; \
   fi
 
