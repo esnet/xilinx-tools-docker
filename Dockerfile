@@ -40,6 +40,9 @@ ENV VIVADO_VERSION=2023.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
 ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0507_1903.tar.gz"
 ARG VIVADO_UPDATE=""
+# Installer config file
+ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
+
 COPY vivado-installer/ /vivado-installer/
 RUN \
   mkdir -p /vivado-installer/install && \
@@ -53,7 +56,7 @@ RUN \
   /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
-    --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
+    --config ${VIVADO_INSTALLER_CONFIG} && \
   rm -r /vivado-installer/install && \
   mkdir -p /vivado-installer/update && \
   if [ ! -z "$VIVADO_UPDATE" ] ; then \
@@ -67,7 +70,7 @@ RUN \
     /vivado-installer/update/xsetup \
       --agree 3rdPartyEULA,XilinxEULA \
       --batch Update \
-      --config /vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt && \
+      --config ${VIVADO_INSTALLER_CONFIG} && \
     rm -r /vivado-installer/update && \
     rm -rf /vivado-installer ; \
   fi
