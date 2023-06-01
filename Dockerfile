@@ -53,6 +53,17 @@ RUN \
       wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/install ; \
     fi \
   ) && \
+  if [ ! -e ${VIVADO_INSTALLER_CONFIG} ] ; then \
+    /vivado-installer/install/xsetup \
+      -p 'Vivado' \
+      -e 'Vivado ML Enterprise' \
+      -b ConfigGen && \
+    echo "No installer configuration file was provided.  Generating a default one for you to modify." && \
+    echo "-------------" && \
+    cat /root/.Xilinx/install_config.txt && \
+    echo "-------------" && \
+    exit 1 ; \
+  fi ; \
   /vivado-installer/install/xsetup \
     --agree 3rdPartyEULA,XilinxEULA \
     --batch Install \
