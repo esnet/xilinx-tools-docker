@@ -30,7 +30,7 @@ build:
   variables:
     PUBLISH_TAG: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull -t $INTERNAL_IMAGE_TAG -t $PUBLISH_TAG$TAG_SUFFIX .
     # push using the generic internal name so trivy can always find/scan it
     - docker push $INTERNAL_IMAGE_TAG
