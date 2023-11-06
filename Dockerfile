@@ -143,10 +143,12 @@ RUN \
     build-essential \
     git \
     jq \
+    less \
     libconfig-dev \
     libpci-dev \
     libsmbios-c2 \
     make \
+    pax-utils \
     python3-click \
     python3-jinja2 \
     python3-libsmbios \
@@ -156,6 +158,7 @@ RUN \
     rsync \
     tcpdump \
     tshark \
+    vim-tiny \
     wireshark-common \
     zip \
     zstd \
