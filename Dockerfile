@@ -97,15 +97,6 @@ RUN \
     rm /tmp/libudev1_*.deb ; \
   fi
 
-# Hack: fix the missing (ie. not properly vendored) libthrift0.11.0 package for Ubuntu 22.04 (jammy) by copying
-#       it from where it is already vendored for Ubuntu 20.04 (focal)
-RUN \
-  if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
-    mkdir -p /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 && \
-    cp       /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
-             /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22/libthrift-0.11.0.so ; \
-  fi
-
 # Hack: Install libssl 1.1.1 package from Ubuntu 20.04 (focal) since it is transitively required by the p4bm-vitisnet
 #       executable and is not properly vendored by the Xilinx runtime environment.
 #
@@ -113,7 +104,7 @@ RUN \
 # Ubuntu 22.04/jammy  provides libssl 3.3
 #
 # p4bm-vitisnet is dynamically linked against
-#   libthrift-0.11.0.so  (not vendored, see previous hack description)
+#   libthrift-0.11.0.so  (now vendored properly in 22.04)
 #     libssl.so.1.1      (not vendored, pull the old version from Ubuntu 20.04)
 #     libcrypto.so.1.1   (not vendored, pull the old version from Ubuntu 20.04)
 #
@@ -131,8 +122,6 @@ RUN \
   fi
 
 # Apply post-install patches to fix issues found on each OS release
-# Ubuntu 22.04 patches
-#   * Add vendor'd library path for Ubuntu/22.  See: hacks above to fix missing/improperly vendor'd libraries
 # Common patches
 #   * Disable workaround for X11 XSupportsLocale bug.  This workaround triggers additional requirements on the host
 #     to have an entire suite of X11 related libraries installed even though we only use vivado in batch/tcl mode.
