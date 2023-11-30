@@ -36,9 +36,9 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools and updates in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
-ENV VIVADO_VERSION=2023.1
+ENV VIVADO_VERSION=2023.2
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="Xilinx_Unified_${VIVADO_VERSION}_0507_1903.tar.gz"
+ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_1013_2256.tar.gz"
 ARG VIVADO_UPDATE=""
 # Installer config file
 ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
@@ -97,15 +97,6 @@ RUN \
     rm /tmp/libudev1_*.deb ; \
   fi
 
-# Hack: fix the missing (ie. not properly vendored) libthrift0.11.0 package for Ubuntu 22.04 (jammy) by copying
-#       it from where it is already vendored for Ubuntu 20.04 (focal)
-RUN \
-  if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
-    mkdir -p /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 && \
-    cp       /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20/libthrift-0.11.0.so \
-             /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22/libthrift-0.11.0.so ; \
-  fi
-
 # Hack: Install libssl 1.1.1 package from Ubuntu 20.04 (focal) since it is transitively required by the p4bm-vitisnet
 #       executable and is not properly vendored by the Xilinx runtime environment.
 #
@@ -113,7 +104,7 @@ RUN \
 # Ubuntu 22.04/jammy  provides libssl 3.3
 #
 # p4bm-vitisnet is dynamically linked against
-#   libthrift-0.11.0.so  (not vendored, see previous hack description)
+#   libthrift-0.11.0.so  (now vendored properly in 22.04)
 #     libssl.so.1.1      (not vendored, pull the old version from Ubuntu 20.04)
 #     libcrypto.so.1.1   (not vendored, pull the old version from Ubuntu 20.04)
 #
@@ -124,15 +115,13 @@ RUN \
 
 RUN \
   if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
-    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb && \
+    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.20_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
       tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libssl1.*.deb ; \
   fi
 
 # Apply post-install patches to fix issues found on each OS release
-# Ubuntu 22.04 patches
-#   * Add vendor'd library path for Ubuntu/22.  See: hacks above to fix missing/improperly vendor'd libraries
 # Common patches
 #   * Disable workaround for X11 XSupportsLocale bug.  This workaround triggers additional requirements on the host
 #     to have an entire suite of X11 related libraries installed even though we only use vivado in batch/tcl mode.
@@ -154,10 +143,12 @@ RUN \
     build-essential \
     git \
     jq \
+    less \
     libconfig-dev \
     libpci-dev \
     libsmbios-c2 \
     make \
+    pax-utils \
     python3-click \
     python3-jinja2 \
     python3-libsmbios \
@@ -167,6 +158,7 @@ RUN \
     rsync \
     tcpdump \
     tshark \
+    vim-tiny \
     wireshark-common \
     zip \
     zstd \
