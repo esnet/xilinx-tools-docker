@@ -2,6 +2,9 @@ include:
   - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
+  - project: 'ht/cicd-common'
+    ref: 'main'
+    file: 'harbor-cve.yml'
 
 build:
   stage: build
@@ -36,10 +39,14 @@ build:
       variables:
         TAG_SUFFIX: -dev
 
+pull_cve_allowlist:
+  extends: .harbor_cve_allowlist
+
 container_scanning:
   variables:
     TRIVY_TIMEOUT: "1h"
   # use 'dependencies' here rather than 'needs' since the gitlab container scanning
   # include sets 'dependencies: []' which takes precedence over 'needs'
   dependencies:
+    - pull_cve_allowlist
     - build
