@@ -2,9 +2,12 @@ include:
   - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
-  - project: 'ht/cicd-common'
-    ref: 'main'
-    file: 'harbor-cve.yml'
+  - component: $CI_SERVER_FQDN/ht/cicd-common/harbor-cve@main
+    inputs:
+      harbor_host:    $HSITE
+      harbor_user:    $HUSER_CVE
+      harbor_token:   $HTOKEN_CVE
+      harbor_project: $CI_PROJECT_NAMESPACE
 
 build:
   stage: build
