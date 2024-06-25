@@ -8,9 +8,9 @@ include:
 
 build:
   stage: build
-  image: docker:20.10.21
+  image: docker:26.1
   services:
-    - docker:20.10.21-dind
+    - docker:26.1-dind
   tags:
     - ht-docker
   variables:
