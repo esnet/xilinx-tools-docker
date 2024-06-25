@@ -34,12 +34,13 @@ at smartnic@es.net.
 Download the Xilinx Vivado Installer
 ------------------------------------
 
-* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2023-2.html
-* Under the `Vivado ML Edition - 2023.2  Full Product Installation` section
-  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2 SFD`
-  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz`
-+* Under the `Vivado ML Edition Update 2 - 2023.2  Product Update` section
-+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2.2`
+* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2024-1.html
+* Under the `Vivado™ Edition - 2024.1  Full Product Installation` section
+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2024.1 SFD`
+  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2024.1_0522_2023.tar.gz`
+* Under the `Vivado™ Edition Update 1 - 2024.1  Product Update` section
+  * Download ` AMD Unified Installer for FPGAs & Adaptive SoCs 2024.1.1`
+  * Save the file as exactly: `Vivado_Vitis_Update_2024.1.1_0614_1525.tar.gz`
 * Move the files into the `vivado-installer` directory in this repo
 
 ```
@@ -49,20 +50,20 @@ $ tree
 ├── entrypoint.sh
 ├── LICENSE.md
 ├── patches
-│   └── vivado-2023.2-postinstall.patch
+│   └── vivado-2024.1-postinstall.patch
 ├── README.md
 └── vivado-installer
-    ├── install_config_vivado.2023.2.txt
-    ├── FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz   <--------- put the base installer here
-    └── Vivado_Vitis_Update_2023.2.2_0209_0950.tar.gz        <--------- put the update installer here
+    ├── install_config_vivado.2024.1.txt
+    ├── FPGAs_AdaptiveSoCs_Unified_2024.1_0522_2023.tar.gz   <--------- put the base installer here
+    └── Vivado_Vitis_Update_2024.1.1_0614_1525.tar.gz        <--------- put the update installer here
 ```
 
 Building the xilinx-tools-docker container
 ------------------------------------------
 
 ```
-docker build --pull -t xilinx-tools-docker:v2023.2.2-latest .
+docker build --pull -t xilinx-tools-docker:v2024.1.1-latest .
 docker image ls
 ```
 
-You should see an image called `xilinx-tools-docker` with tag `v2023.2.2-latest`.
+You should see an image called `xilinx-tools-docker` with tag `v2024.1.1-latest`.
