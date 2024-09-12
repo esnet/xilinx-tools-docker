@@ -40,7 +40,7 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 ENV VIVADO_VERSION=2023.2
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
 ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_1013_2256.tar.gz"
-ARG VIVADO_UPDATE=""
+ARG VIVADO_UPDATE="Vivado_Vitis_Update_2023.2.2_0209_0950.tar.gz"
 # Installer config file
 ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
 
@@ -116,7 +116,7 @@ RUN \
 
 RUN \
   if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
-    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.20_amd64.deb && \
+    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
       tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libssl1.*.deb ; \

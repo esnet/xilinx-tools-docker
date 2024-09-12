@@ -38,6 +38,8 @@ Download the Xilinx Vivado Installer
 * Under the `Vivado ML Edition - 2023.2  Full Product Installation` section
   * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2 SFD`
   * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz`
++* Under the `Vivado ML Edition Update 2 - 2023.2  Product Update` section
++  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2.2`
 * Move the files into the `vivado-installer` directory in this repo
 
 ```
@@ -46,22 +48,21 @@ $ tree
 ├── Dockerfile
 ├── entrypoint.sh
 ├── LICENSE.md
-├── README.md
 ├── patches
 │   └── vivado-2023.2-postinstall.patch
-├── sources.list.focal
-├── sources.list.jammy
+├── README.md
 └── vivado-installer
     ├── install_config_vivado.2023.2.txt
-    └── FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz   <--------- put the base installer here
+    ├── FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz   <--------- put the base installer here
+    └── Vivado_Vitis_Update_2023.2.2_0209_0950.tar.gz        <--------- put the update installer here
 ```
 
 Building the xilinx-tools-docker container
 ------------------------------------------
 
 ```
-docker build --pull -t xilinx-tools-docker:v2023.2-latest .
+docker build --pull -t xilinx-tools-docker:v2023.2.2-latest .
 docker image ls
 ```
 
-You should see an image called `xilinx-tools-docker` with tag `v2023.2-latest`.
+You should see an image called `xilinx-tools-docker` with tag `v2023.2.2-latest`.
