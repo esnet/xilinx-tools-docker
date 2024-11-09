@@ -40,7 +40,7 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 ENV VIVADO_VERSION=2024.1
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
 ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_0522_2023.tar.gz"
-ARG VIVADO_UPDATE="Vivado_Vitis_Update_${VIVADO_VERSION}.1_0614_1525.tar.gz"
+ARG VIVADO_UPDATE="Vivado_Vitis_Update_${VIVADO_VERSION}.2_0906_0624.tar.gz"
 # Installer config file
 ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
 
