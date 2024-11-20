@@ -17,7 +17,6 @@ RUN \
     lsb-release \
     net-tools \
     patch \
-    pigz \
     unzip \
     wget \
     && \
@@ -49,9 +48,9 @@ RUN \
   mkdir -p /vivado-installer/install && \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
-      pigz -dc /vivado-installer/$VIVADO_INSTALLER | tar xa --strip-components=1 -C /vivado-installer/install ; \
+      tar xf /vivado-installer/$VIVADO_INSTALLER --strip-components=1 -C /vivado-installer/install ; \
     else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/install ; \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | tar x --strip-components=1 -C /vivado-installer/install ; \
     fi \
   ) && \
   if [ ! -e ${VIVADO_INSTALLER_CONFIG} ] ; then \
@@ -74,9 +73,9 @@ RUN \
   if [ ! -z "$VIVADO_UPDATE" ] ; then \
     ( \
       if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-        pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
+        tar xf /vivado-installer/$VIVADO_UPDATE --strip-components=1 -C /vivado-installer/update ; \
       else \
-        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | tar x --strip-components=1 -C /vivado-installer/update ; \
       fi \
     ) && \
     /vivado-installer/update/xsetup \
