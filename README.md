@@ -34,13 +34,10 @@ at smartnic@es.net.
 Download the Xilinx Vivado Installer
 ------------------------------------
 
-* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2024-1.html
-* Under the `Vivado™ Edition - 2024.1  Full Product Installation` section
-  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2024.1 SFD`
-  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2024.1_0522_2023.tar.gz`
-* Under the `Vivado™ Edition Update 1 - 2024.1  Product Update` section
-  * Download ` AMD Unified Installer for FPGAs & Adaptive SoCs 2024.1.2`
-  * Save the file as exactly: `Vivado_Vitis_Update_2024.1.2_0906_0624.tar.gz`
+* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2024-2.html
+* Under the `Vivado™ Edition - 2024.2  Full Product Installation` section
+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2024.2 SFD`
+  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2024.2_1113_1001.tar`
 * Move the files into the `vivado-installer` directory in this repo
 
 ```
@@ -50,20 +47,19 @@ $ tree
 ├── entrypoint.sh
 ├── LICENSE.md
 ├── patches
-│   └── vivado-2024.1-postinstall.patch
+│   └── vivado-2024.2-postinstall.patch
 ├── README.md
 └── vivado-installer
-    ├── install_config_vivado.2024.1.txt
-    ├── FPGAs_AdaptiveSoCs_Unified_2024.1_0522_2023.tar.gz   <--------- put the base installer here
-    └── Vivado_Vitis_Update_2024.1.2_0906_0624.tar.gz        <--------- put the update installer here
+    ├── install_config_vivado.2024.2.txt
+    └── FPGAs_AdaptiveSoCs_Unified_2024.2_1113_1001.tar   <--------- put the base installer here
 ```
 
 Building the xilinx-tools-docker container
 ------------------------------------------
 
 ```
-docker build --pull -t xilinx-tools-docker:v2024.1.2-latest .
+docker build --pull -t xilinx-tools-docker:v2024.2-latest .
 docker image ls
 ```
 
-You should see an image called `xilinx-tools-docker` with tag `v2024.1.2-latest`.
+You should see an image called `xilinx-tools-docker` with tag `v2024.2-latest`.
