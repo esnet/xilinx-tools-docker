@@ -83,9 +83,9 @@ RUN \
       --agree 3rdPartyEULA,XilinxEULA \
       --batch Update \
       --config ${VIVADO_INSTALLER_CONFIG} && \
-    rm -r /vivado-installer/update && \
-    rm -rf /vivado-installer ; \
-  fi
+    rm -r /vivado-installer/update ; \
+  fi && \
+  rm -rf /vivado-installer
 
 # ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
 # Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
