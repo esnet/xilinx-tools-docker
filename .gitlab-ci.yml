@@ -49,6 +49,16 @@ pull_cve_allowlist:
 container_scanning:
   variables:
     TRIVY_TIMEOUT: "1h"
+
+    # The following variables are needed to allow the trivy scanner to pull it's database from a
+    # separate registry, external to gitlab. While the gitlab container scan job only supports one
+    # set of credentials, used for both the database and the container image, having the image in
+    # gitlab's internal registry is possible because the runner has read-only access by default, so
+    # explicit authentication isn't required to pull from within the job. Note that this wouldn't
+    # work if the database and image were in separate external registries.
+    CS_REGISTRY_USER: $HUSER_RO
+    CS_REGISTRY_PASSWORD: $HTOKEN_RO
+
   # use 'dependencies' here rather than 'needs' since the gitlab container scanning
   # include sets 'dependencies: []' which takes precedence over 'needs'
   dependencies:
