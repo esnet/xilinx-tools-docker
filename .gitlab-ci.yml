@@ -11,9 +11,10 @@ include:
 
 build:
   stage: build
-  image: docker:26.1
+  image: wharf.es.net/dockerhub-proxy/library/docker:26.1
   services:
-    - docker:26.1-dind
+    - name: wharf.es.net/dockerhub-proxy/library/docker:26.1-dind
+      alias: docker
   tags:
     - ht-docker
   variables:
