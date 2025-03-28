@@ -116,7 +116,7 @@ RUN \
 
 RUN \
   if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
-    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.23_amd64.deb && \
+    wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
       tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libssl1.*.deb ; \

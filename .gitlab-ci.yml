@@ -2,7 +2,7 @@ include:
   - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
-  - component: $CI_SERVER_FQDN/ht/cicd-common/harbor-cve@main
+  - component: $CI_SERVER_FQDN/ht/cicd-common/harbor-cve@v0.3.0
     inputs:
       harbor_host:    $HSITE
       harbor_user:    $HUSER_CVE
@@ -11,9 +11,10 @@ include:
 
 build:
   stage: build
-  image: docker:26.1
+  image: wharf.es.net/dockerhub-proxy/library/docker:26.1
   services:
-    - docker:26.1-dind
+    - name: wharf.es.net/dockerhub-proxy/library/docker:26.1-dind
+      alias: docker
   tags:
     - ht-docker
   variables:
