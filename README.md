@@ -35,9 +35,9 @@ Download the Xilinx Vivado Installer
 ------------------------------------
 
 * Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2024-2.html
-* Under the `Vivado™ Edition - 2024.2  Full Product Installation` section
-  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2024.2 SFD`
-  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2024.2_1113_1001.tar`
+* Under the `Vivado™ Edition Update 2 - 2024.2  Product Update` section
+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2024.2.2: SFD All OS installer Single-File Download`
+  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2024.2.2_0306_2141.tar`
 * Move the files into the `vivado-installer` directory in this repo
 
 ```
@@ -47,19 +47,19 @@ $ tree
 ├── entrypoint.sh
 ├── LICENSE.md
 ├── patches
-│   └── vivado-2024.2-postinstall.patch
+│   └── vivado-2024.2.2-postinstall.patch
 ├── README.md
 └── vivado-installer
-    ├── install_config_vivado.2024.2.txt
-    └── FPGAs_AdaptiveSoCs_Unified_2024.2_1113_1001.tar   <--------- put the base installer here
+    ├── install_config_vivado.2024.2.2.txt
+    └── FPGAs_AdaptiveSoCs_Unified_2024.2.2_0306_2141.tar   <--------- put the base installer here
 ```
 
 Building the xilinx-tools-docker container
 ------------------------------------------
 
 ```
-docker build --pull -t xilinx-tools-docker:v2024.2-latest .
+docker build --pull -t xilinx-tools-docker:v2024.2.2-latest .
 docker image ls
 ```
 
-You should see an image called `xilinx-tools-docker` with tag `v2024.2-latest`.
+You should see an image called `xilinx-tools-docker` with tag `v2024.2.2-latest`.

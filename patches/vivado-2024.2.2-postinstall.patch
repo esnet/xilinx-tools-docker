@@ -25,3 +25,12 @@
 --- 1,2 ----
 + # Enable U280 as 'beta' device (required as of Vivado 2024.2)
 + enable_beta_device xcu280*
+--- /tools/Xilinx/Vivado/2024.2/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl.orig	2025-06-04 19:44:05.426929839 +0000
++++ /tools/Xilinx/Vivado/2024.2/bin/unwrapped/lnx64.o/p4c-vitisnet.tcl	2025-06-04 19:44:34.478555928 +0000
+@@ -1,5 +1,5 @@
+ # Must be aligned with IP version number
+-set VITIS_NET_P4_IP_VERSION "vitis_net_p4_v3_1"
++set VITIS_NET_P4_IP_VERSION "vitis_net_p4_v2_2"
+ 
+ 
+ if { [file exist [file join $env(XILINX_VIVADO) data ip xilinx $VITIS_NET_P4_IP_VERSION bin libp4c.so]] } {
