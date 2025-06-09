@@ -1,0 +1,15 @@
+--- /tools/Xilinx/2025.1/Vivado/lib/scripts/rdi/features/base/base.tcl.orig	2025-06-10 14:40:55.622295698 +0000
++++ /tools/Xilinx/2025.1/Vivado/lib/scripts/rdi/features/base/base.tcl	2025-06-10 14:41:56.501448344 +0000
+@@ -38,6 +38,6 @@
+ rdi::disable_console
+ 
+ # work around x11 XSupportsLocale bug
+-rdi::x11_workaround
++#rdi::x11_workaround
+ 
+ 
+--- /tools/Xilinx/2025.1/Vivado/scripts/Vivado_init.tcl.orig	1970-01-01 00:00:00.000000000 +0000
++++ /tools/Xilinx/2025.1/Vivado/scripts/Vivado_init.tcl	2025-06-10 14:56:44.269139130 +0000
+@@ -0,0 +1,2 @@
++# Enable U280 as 'beta' device (required as of Vivado 2024.2)
++enable_beta_device xcu280*

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source the Xilinx Vivado settings into the environment
-source /tools/Xilinx/Vivado/${VIVADO_BASE_VERSION}/settings64.sh
+source /tools/Xilinx/${VIVADO_BASE_VERSION}/Vivado/settings64.sh
 
 # Apply workaround for crashes in FlexLM license manager in Ubuntu 22.04
 # See: https://community.revenera.com/s/question/0D5PL00000NwuKu0AJ/issues-when-running-xilinx-tools-or-other-vendor-tools-in-docker-environment
