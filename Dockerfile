@@ -36,10 +36,10 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools and updates in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
-ENV VIVADO_BASE_VERSION=2024.2
-ENV VIVADO_VERSION=${VIVADO_BASE_VERSION}.2
+ENV VIVADO_BASE_VERSION=2025.1
+ENV VIVADO_VERSION=${VIVADO_BASE_VERSION}
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_0306_2141.tar"
+ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_SDI_${VIVADO_VERSION}_0530_0145.tar"
 ARG VIVADO_UPDATE=""
 # Installer config file
 ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
@@ -94,7 +94,7 @@ RUN \
   if [ "$(lsb_release --short --release)" = "20.04" ] ; then \
     wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
-      tar -C /tools/Xilinx/Vivado/${VIVADO_BASE_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+      tar -C /tools/Xilinx/${VIVADO_BASE_VERSION}/Vivado/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libudev1_*.deb ; \
   fi
 
@@ -118,7 +118,7 @@ RUN \
   if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
     wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
-      tar -C /tools/Xilinx/Vivado/${VIVADO_BASE_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+      tar -C /tools/Xilinx/${VIVADO_BASE_VERSION}/Vivado/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libssl1.*.deb ; \
   fi
 
