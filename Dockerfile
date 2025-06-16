@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configure local ubuntu mirror as package source
@@ -17,7 +17,6 @@ RUN \
     lsb-release \
     net-tools \
     patch \
-    pigz \
     unzip \
     wget \
     && \
@@ -37,10 +36,11 @@ ARG DISPENSE_BASE_URL="https://dispense.es.net/Linux/xilinx"
 
 # Install the Xilinx Vivado tools and updates in headless mode
 # ENV var to help users to find the version of vivado that has been installed in this container
-ENV VIVADO_VERSION=2023.2
+ENV VIVADO_BASE_VERSION=2024.2
+ENV VIVADO_VERSION=${VIVADO_BASE_VERSION}.2
 # Xilinx installer tar file originally from: https://www.xilinx.com/support/download.html
-ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_1013_2256.tar.gz"
-ARG VIVADO_UPDATE="Vivado_Vitis_Update_2023.2.2_0209_0950.tar.gz"
+ARG VIVADO_INSTALLER="FPGAs_AdaptiveSoCs_Unified_${VIVADO_VERSION}_0306_2141.tar"
+ARG VIVADO_UPDATE=""
 # Installer config file
 ARG VIVADO_INSTALLER_CONFIG="/vivado-installer/install_config_vivado.${VIVADO_VERSION}.txt"
 
@@ -49,9 +49,9 @@ RUN \
   mkdir -p /vivado-installer/install && \
   ( \
     if [ -e /vivado-installer/$VIVADO_INSTALLER ] ; then \
-      pigz -dc /vivado-installer/$VIVADO_INSTALLER | tar xa --strip-components=1 -C /vivado-installer/install ; \
+      tar xf /vivado-installer/$VIVADO_INSTALLER --strip-components=1 -C /vivado-installer/install ; \
     else \
-      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/install ; \
+      wget -qO- $DISPENSE_BASE_URL/$VIVADO_INSTALLER | tar x --strip-components=1 -C /vivado-installer/install ; \
     fi \
   ) && \
   if [ ! -e ${VIVADO_INSTALLER_CONFIG} ] ; then \
@@ -74,18 +74,18 @@ RUN \
   if [ ! -z "$VIVADO_UPDATE" ] ; then \
     ( \
       if [ -e /vivado-installer/$VIVADO_UPDATE ] ; then \
-        pigz -dc /vivado-installer/$VIVADO_UPDATE | tar xa --strip-components=1 -C /vivado-installer/update ; \
+        tar xf /vivado-installer/$VIVADO_UPDATE --strip-components=1 -C /vivado-installer/update ; \
       else \
-        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | pigz -dc | tar xa --strip-components=1 -C /vivado-installer/update ; \
+        wget -qO- $DISPENSE_BASE_URL/$VIVADO_UPDATE | tar x --strip-components=1 -C /vivado-installer/update ; \
       fi \
     ) && \
     /vivado-installer/update/xsetup \
       --agree 3rdPartyEULA,XilinxEULA \
       --batch Update \
       --config ${VIVADO_INSTALLER_CONFIG} && \
-    rm -r /vivado-installer/update && \
-    rm -rf /vivado-installer ; \
-  fi
+    rm -r /vivado-installer/update ; \
+  fi && \
+  rm -rf /vivado-installer
 
 # ONLY REQUIRED FOR Ubuntu 20.04 (focal) but harmless on other distros
 # Hack: replace the stock libudev1 with a newer one from Ubuntu 22.04 (jammy) to avoid segfaults when invoked
@@ -94,7 +94,7 @@ RUN \
   if [ "$(lsb_release --short --release)" = "20.04" ] ; then \
     wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/s/systemd/libudev1_249.11-0ubuntu3_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libudev1_*.deb | \
-      tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+      tar -C /tools/Xilinx/Vivado/${VIVADO_BASE_VERSION}/lib/lnx64.o/Ubuntu/20 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libudev1_*.deb ; \
   fi
 
@@ -118,7 +118,7 @@ RUN \
   if [ "$(lsb_release --short --release)" = "22.04" ] ; then \
     wget -q -P /tmp http://linux.mirrors.es.net/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb && \
     dpkg-deb --fsys-tarfile /tmp/libssl1.*.deb | \
-      tar -C /tools/Xilinx/Vivado/${VIVADO_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
+      tar -C /tools/Xilinx/Vivado/${VIVADO_BASE_VERSION}/lib/lnx64.o/Ubuntu/22 --strip-components=4 -xavf - ./usr/lib/x86_64-linux-gnu/ && \
     rm /tmp/libssl1.*.deb ; \
   fi
 
