@@ -63,3 +63,7 @@ docker image ls
 ```
 
 You should see an image called `xilinx-tools-docker` with tag `v2025.1-latest`.
+
+---
+
+*Last updated: 2025-06-20*
