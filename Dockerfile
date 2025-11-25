@@ -147,7 +147,10 @@ RUN \
     less \
     libconfig-dev \
     libpci-dev \
+    libpixman-1-0 \
+    libpng16-16 \
     libsmbios-c2 \
+    libx11-6 \
     make \
     pax-utils \
     python3-click \
