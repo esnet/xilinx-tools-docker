@@ -34,10 +34,10 @@ at smartnic@es.net.
 Download the Xilinx Vivado Installer
 ------------------------------------
 
-* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2025-1.html
-* Under the `Vivado™ Edition - 2025.1  Full Product Installation` section
-  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2025.1 SFD`
-  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_SDI_2025.1_0530_0145.tar`
+* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2025-2.html
+* Under the `Vivado™ Edition - 2025.2  Full Product Installation` section
+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2025.2 SFD`
+  * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_SDI_2025.2_1114_2157.tar`
 * Move the files into the `vivado-installer` directory in this repo
 
 ```
@@ -47,19 +47,19 @@ $ tree
 ├── entrypoint.sh
 ├── LICENSE.md
 ├── patches
-│   └── vivado-2025.1-postinstall.patch
+│   └── vivado-2025.2-postinstall.patch
 ├── README.md
 └── vivado-installer
-    ├── install_config_vivado.2025.1.txt
-    └── FPGAs_AdaptiveSoCs_Unified_SDI_2025.1_0530_0145.tar   <--------- put the base installer here
+    ├── install_config_vivado.2025.2.txt
+    └── FPGAs_AdaptiveSoCs_Unified_SDI_2025.2_1114_2157.tar   <--------- put the base installer here
 ```
 
 Building the xilinx-tools-docker container
 ------------------------------------------
 
 ```
-docker build --pull -t xilinx-tools-docker:v2025.1-latest .
+docker build --pull -t xilinx-tools-docker:v2025.2-latest .
 docker image ls
 ```
 
-You should see an image called `xilinx-tools-docker` with tag `v2025.1-latest`.
+You should see an image called `xilinx-tools-docker` with tag `v2025.2-latest`.
