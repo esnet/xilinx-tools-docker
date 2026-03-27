@@ -1,9 +1,13 @@
-FROM ubuntu:jammy
+# syntax=docker/dockerfile:1
+
+FROM ubuntu:noble
 ENV DEBIAN_FRONTEND=noninteractive
+
+SHELL ["bash", "-c"]
 
 # Configure local ubuntu mirror as package source
 RUN \
-  sed -i -re 's|(http://)([^/]+.*)/|\1linux.mirrors.es.net/ubuntu|g' /etc/apt/sources.list
+  sed -i -re 's|(http://)([^/]+.*)/|\1linux.mirrors.es.net/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
 
 # Install packages required for running the vivado installer
 RUN \
@@ -12,7 +16,6 @@ RUN \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
     ca-certificates \
-    libtinfo5 \
     locales \
     lsb-release \
     net-tools \
@@ -153,12 +156,6 @@ RUN \
     libx11-6 \
     make \
     pax-utils \
-    python3-click \
-    python3-jinja2 \
-    python3-libsmbios \
-    python3-pip \
-    python3-scapy \
-    python3-yaml \
     rsync \
     tcpdump \
     tshark \
@@ -167,11 +164,50 @@ RUN \
     zip \
     zstd \
     && \
-  pip3 install pyyaml-include && \
-  pip3 install yq && \
   apt-get autoclean && \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/*
+
+# Setup a Python virtualenv for managing Python-based build tools/libraries
+# separately from system packages.
+ADD \
+    --unpack=true \
+    --chown=root:root \
+    --checksum=sha256:5a360b0de092ddf4131f5313d0411b48c4e95e8107e40c3f8f2e9fcb636b3583 \
+    https://releases.astral.sh/github/uv/releases/download/0.10.11/uv-x86_64-unknown-linux-gnu.tar.gz \
+    /root
+
+RUN <<EOF
+    set -ex
+
+    # Install a Python virtualenv manager.
+    chown root:root /root/uv-x86_64-unknown-linux-gnu/*
+    mv /root/uv-x86_64-unknown-linux-gnu/uv{,x} /usr/local/bin/.
+    rm -r /root/uv-x86_64-unknown-linux-gnu
+
+    # Create a new virtualenv for the root user.
+    uv venv --directory / --no-project --no-config --clear
+EOF
+
+# Make sure the Python virtualenv is always active.
+ENV VIRTUAL_ENV="/.venv"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+
+RUN uv pip install --no-cache \
+    click \
+    jinja2 \
+    pyyaml \
+    pyyaml-include \
+    scapy \
+    smbios \
+    yq
+
+# Reference: https://www.wireshark.org/docs/wsdg_html_chunked/wsluarm.html
+RUN cat <<"EOF" >/usr/lib/x86_64-linux-gnu/wireshark/plugins/init.lua
+-- Always allow lua scripts when running as the root user.
+enable_lua = true
+run_user_scripts_when_superuser = true
+EOF
 
 # Set up the container to pre-source the vivado environment
 COPY ./entrypoint.sh /entrypoint.sh
