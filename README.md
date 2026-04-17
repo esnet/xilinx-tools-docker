@@ -34,13 +34,15 @@ at smartnic@es.net.
 Download the Xilinx Vivado Installer
 ------------------------------------
 
-* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2023-2.html
+* Open a web browser to this page: https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/archive.html
+* Expand the `2023.2` item in the `2023` section.
 * Under the `Vivado ML Edition - 2023.2  Full Product Installation` section
   * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2 SFD`
   * Save the file as exactly: `FPGAs_AdaptiveSoCs_Unified_2023.2_1013_2256.tar.gz`
-+* Under the `Vivado ML Edition Update 2 - 2023.2  Product Update` section
-+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2.2`
-* Move the files into the `vivado-installer` directory in this repo
+* Under the `Vivado ML Edition Update 2 - 2023.2  Product Update` section
+  * Download `AMD Unified Installer for FPGAs & Adaptive SoCs 2023.2.2: All OS installer Single-File Download`
+  * Save the file as exactly: `Vivado_Vitis_Update_2023.2.2_0209_0950.tar.gz`
+ Move the files into the `vivado-installer` directory in this repo
 
 ```
 $ tree
